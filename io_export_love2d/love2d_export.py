@@ -15,7 +15,8 @@ def write_some_data(context, filepath, use_some_setting):
             p = str.replace(p, "\\", "/")
             print(p)
             imageSet.add(p)
-            # todo: use empty size to calculate scale. empty size is width of image.
+            
+            # use empty size to calculate scale. empty display size is width its width in blender units.
             s = o.empty_display_size / o.data.size[0]
             drawable = {
                 "name": o.name,

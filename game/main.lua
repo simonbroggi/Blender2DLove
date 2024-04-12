@@ -5,13 +5,17 @@ end
 function love.load()
     love.graphics.clear()
     love.graphics.setColor(1,1,1,1)
-    local windowWidth, windowHeight = love.graphics.getDimensions()
-    love.graphics.rectangle("fill", 0, 0, windowWidth, windowHeight)
-    require("test")
-    love.graphics.circle("fill", 20,20,20)
-    love.graphics.present()
-    love.timer.sleep(2)
-    love.event.quit()
+    WindowWidth, WindowHeight = love.graphics.getDimensions()
+
+end
+
+function love.update(dt)
+end
+
+function love.draw()
+    love.graphics.rectangle("fill", 0, 0, WindowWidth, WindowHeight)
+    dofile("game/test.lua")
+    love.timer.sleep(0.01)
 end
 
 local love_errorhandler = love.errorhandler
