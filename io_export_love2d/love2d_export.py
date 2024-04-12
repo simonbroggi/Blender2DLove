@@ -16,16 +16,17 @@ def write_some_data(context, filepath, use_some_setting):
             print(p)
             imageSet.add(p)
             # todo: use empty size to calculate scale. empty size is width of image.
+            s = o.empty_display_size / o.data.size[0]
             drawable = {
                 "name": o.name,
                 "image": p,
                 "x": o.location.x,
                 "y": -o.location.y,
                 "r": -o.rotation_euler.z,
-                "sx": o.scale.x,
-                "sy": o.scale.y,
-                "ox": o.data.size[0]*o.empty_image_offset[0],
-                "oy": o.data.size[1]*(1.0+o.empty_image_offset[1]),
+                "sx": s * o.scale.x,
+                "sy": s * o.scale.y,
+                "ox": o.data.size[0] * -o.empty_image_offset[0],
+                "oy": o.data.size[1] * (1.0+o.empty_image_offset[1]),
             }
             drawables.append(drawable)
 
