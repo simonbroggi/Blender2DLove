@@ -11,18 +11,21 @@ def write_some_data(context, filepath, use_some_setting):
     for o in context.collection.objects:
         if o.empty_display_type == 'IMAGE':
             o.data
-            print(o.data.filepath)
-            imageSet.add(o.data.filepath)
+            p = str.removeprefix(bpy.path.relpath(o.data.filepath),"//")
+            p = str.replace(p, "\\", "/")
+            print(p)
+            imageSet.add(p)
+            # todo: use empty size to calculate scale. empty size is width of image.
             drawable = {
                 "name": o.name,
-                "image": o.data.filepath,
+                "image": p,
                 "x": o.location.x,
                 "y": -o.location.y,
-                "r": o.rotation_euler.z,
+                "r": -o.rotation_euler.z,
                 "sx": o.scale.x,
                 "sy": o.scale.y,
                 "ox": o.data.size[0]*o.empty_image_offset[0],
-                "oy": o.data.size[1]*(1.0-o.empty_image_offset[1]),
+                "oy": o.data.size[1]*(1.0+o.empty_image_offset[1]),
             }
             drawables.append(drawable)
 
@@ -30,6 +33,7 @@ def write_some_data(context, filepath, use_some_setting):
     for image in imageSet:
         f.write("images[\"%s\"] = love.graphics.newImage(\"%s\")\n" % (image,image))
 
+    drawables.reverse()
     for drawable in drawables:
         f.write("love.graphics.draw(images[\"%s\"], %s, %s, %s, %s, %s, %s, %s)\n" %(drawable["image"], drawable["x"], drawable["y"], drawable["r"], drawable["sx"], drawable["sy"], drawable["ox"], drawable["oy"]))
         

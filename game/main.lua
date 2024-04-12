@@ -3,8 +3,11 @@ if arg[2] == "debug" then
 end
 
 function love.load()
-    require("test")
+    love.graphics.clear()
     love.graphics.setColor(1,1,1,1)
+    local windowWidth, windowHeight = love.graphics.getDimensions()
+    love.graphics.rectangle("fill", 0, 0, windowWidth, windowHeight)
+    require("test")
     love.graphics.circle("fill", 20,20,20)
     love.graphics.present()
     love.timer.sleep(2)
