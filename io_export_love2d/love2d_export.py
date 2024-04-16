@@ -9,7 +9,14 @@ def write_some_data(context, filepath, use_some_setting):
     drawables = []
 
     for o in context.collection.objects:
-        if o.empty_display_type == 'IMAGE':
+        if o.type == 'GPENCIL':
+            print("todo: gpencil export")
+            # get gpencil bounding box
+            # render gpencil to image. probably use clipping region set to bounds of the gpencil object.
+            # https://docs.blender.org/manual/en/latest/editors/3dview/navigate/regions.html
+        elif o.type == 'FONT':
+            print("todo: font export")
+        elif o.type == 'EMPTY' and o.empty_display_type == 'IMAGE':
             o.data
             p = str.removeprefix(bpy.path.relpath(o.data.filepath),"//")
             p = str.replace(p, "\\", "/")
