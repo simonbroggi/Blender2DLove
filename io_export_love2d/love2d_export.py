@@ -16,6 +16,8 @@ def write_some_data(context, filepath, use_some_setting):
             # https://docs.blender.org/manual/en/latest/editors/3dview/navigate/regions.html
         elif o.type == 'FONT':
             print("todo: font export")
+            print(o.data.body) # print the text
+            # o.data.font is the font. find path...
         elif o.type == 'EMPTY' and o.empty_display_type == 'IMAGE':
             o.data
             p = str.removeprefix(bpy.path.relpath(o.data.filepath),"//")
