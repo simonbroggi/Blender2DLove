@@ -27,6 +27,14 @@ def write_some_data(context, filepath, use_some_setting):
             p = correctPath(o.data.font.filepath)
             
             # todo (1st prio): figur out font size. how to get love font size from blender font size.
+            # o.data.size seems to correspond to https://love2d.org/wiki/Font:getHeight
+            # so what's the spacing (I'll need to subtract it, probbably)?
+            # o.data is a TextCurve https://docs.blender.org/api/current/bpy.types.TextCurve.html
+            # o.data.font is a VectorFont https://docs.blender.org/api/current/bpy.types.VectorFont.html#bpy.types.VectorFont
+            
+            # usefull?:
+            # https://blender.stackexchange.com/revisions/313554/3
+            
             
             # todo: also store the size of the font. currently hardcoded to 140.
             # the set needs to hold the same font twice if it exists with different sizes!
