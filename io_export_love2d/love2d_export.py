@@ -1,11 +1,17 @@
 import bpy
 
+def correctPath(bPath):
+    p = str.removeprefix(bpy.path.relpath(bPath),"//")
+    p = str.replace(p, "\\", "/")
+    return p
+
 def write_some_data(context, filepath, use_some_setting):
     print("running write_some_data...")
     f = open(filepath, 'w', encoding='utf-8')
     f.write("print(\"Hello Blender %s Löve\")\n" % use_some_setting)
 
     imageSet = set()
+    fontSet = set()
     drawables = []
 
     for o in context.collection.objects:
@@ -18,10 +24,36 @@ def write_some_data(context, filepath, use_some_setting):
             print("todo: font export")
             print(o.data.body) # print the text
             # o.data.font is the font. find path...
+            p = correctPath(o.data.font.filepath)
+            
+            # todo (1st prio): figur out font size. how to get love font size from blender font size.
+            
+            # todo: also store the size of the font. currently hardcoded to 140.
+            # the set needs to hold the same font twice if it exists with different sizes!
+            # o.data.size
+            fontSet.add(p) 
+            
+            s = 1.0 
+            
+            drawable = {
+                "name": o.name,
+                "text": o.data.body,
+                "font": p,
+                "x": o.location.x,
+                "y": -o.location.y,
+                "r": -o.rotation_euler.z,
+                "sx": o.scale.x,
+                "sy": o.scale.y,
+                "ox": o.data.offset_x,
+                "oy": o.data.size + o.data.offset_y, #todo: font height instead of o.data.size
+                "kx": -o.data.shear,
+                "ky": 0,
+            }
+            drawables.append(drawable)
+            
         elif o.type == 'EMPTY' and o.empty_display_type == 'IMAGE':
             o.data
-            p = str.removeprefix(bpy.path.relpath(o.data.filepath),"//")
-            p = str.replace(p, "\\", "/")
+            p = correctPath(o.data.filepath)
             print(p)
             imageSet.add(p)
             
@@ -37,17 +69,37 @@ def write_some_data(context, filepath, use_some_setting):
                 "sy": s * o.scale.y,
                 "ox": o.data.size[0] * -o.empty_image_offset[0],
                 "oy": o.data.size[1] * (1.0+o.empty_image_offset[1]),
+                "kx": 0,
+                "ky": 0,
             }
             drawables.append(drawable)
 
     f.write("local images = {}\n")
     for image in imageSet:
         f.write("images[\"%s\"] = love.graphics.newImage(\"%s\")\n" % (image,image))
+    
+    f.write("local fonts = {}\n")
+    for font in fontSet:
+        # todo: dont use a constant size of 140. Instead get the size from the blender font object
+        f.write("fonts[\"%s\"] = love.graphics.newFont(\"%s\", 140)\n" % (font,font))
 
     drawables.reverse()
     for drawable in drawables:
-        f.write("love.graphics.draw(images[\"%s\"], %s, %s, %s, %s, %s, %s, %s)\n" %(drawable["image"], drawable["x"], drawable["y"], drawable["r"], drawable["sx"], drawable["sy"], drawable["ox"], drawable["oy"]))
-        
+        x = drawable["x"]
+        y = drawable["y"]
+        r = drawable["r"]
+        sx= drawable["sx"]
+        sy= drawable["sy"]
+        ox= drawable["ox"]
+        oy= drawable["oy"]
+        kx= drawable["kx"]
+        ky= drawable["ky"]
+        if "image" in drawable:
+            f.write("love.graphics.setColor(1,1,1,1)")
+            f.write("love.graphics.draw(images[\"%s\"], %s, %s, %s, %s, %s, %s, %s)\n" %(drawable["image"], x, y, r, sx, sy, ox, oy))
+        elif "text" in drawable:
+            f.write("love.graphics.setColor(0,0,0,1)")
+            f.write("love.graphics.print(\"%s\", fonts[\"%s\"], %s, %s, %s, %s, %s, %s, %s, %s, %s)\n" %(drawable["text"], drawable["font"], x, y, r, sx, sy, ox, oy, kx, ky))
     f.close()
 
     return {'FINISHED'}
